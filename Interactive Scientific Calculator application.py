@@ -156,6 +156,11 @@ def equal():
     equation = expression.replace('\u03c0', 'pi')
     equation = equation.replace('\u00d7', '*')
     equation = equation.replace('\u00f7', '/')
+    equation = equation.replace('ln', 'log')
+    if equation.count('(') != equation.count(')'):
+        c = equation.count('(') - equation.count(')')
+        for i in range(c):
+            equation = equation + ')'
     result = str(eval(equation))
     entry.delete(0, tk.END)
     entry.insert(tk.END, '=' + result)
