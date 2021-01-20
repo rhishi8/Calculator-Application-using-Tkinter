@@ -5,18 +5,18 @@ from math import *
 win = tk.Tk()
 
 entry_font = Font(win, family = "Arial", size = 16)
-btn_font = Font(win, family = "Arial")
+btn_font = Font(win, family = "Arial", size = 14, weight = 'bold')
 
-cvs = tk.Canvas(win, width = 280, height = 280)
+cvs = tk.Canvas(win, width = 280, height = 300)
 cvs.pack()
 
 entry = tk.Entry(win, bd = 4, font = entry_font, width = 20)
 cvs.create_window(140, 40, window = entry)
 
-row = [90, 130, 170, 210, 250]
+row = [95, 140, 185, 230, 275]
 col = [40,  90, 140, 190, 240]
 btn_h = 1
-btn_w = 4
+btn_w = 3
 
 def f_ln():
     entry.insert(tk.INSERT, 'ln(')
@@ -45,8 +45,8 @@ cvs.create_window(col[3], row[0], window = tan_btn)
 def f_pi():
     entry.insert(tk.INSERT, '\u03c0')
 
-pov_btn = tk.Button(text = '\u03c0', command = f_pi, font = btn_font, height = btn_h, width = btn_w)
-cvs.create_window(col[4], row[0], window = pov_btn)
+pi_btn = tk.Button(text = '\u03c0', command = f_pi, font = btn_font, height = btn_h, width = btn_w)
+cvs.create_window(col[4], row[0], window = pi_btn)
 
 def n_7():
     entry.insert(tk.INSERT, '7')
@@ -67,8 +67,7 @@ n9_btn = tk.Button(text = '9', command = n_9, font = btn_font, height = btn_h, w
 cvs.create_window(col[2], row[1], window = n9_btn)
 
 def Del():
-    l = len(entry.get())
-    entry.delete(l-1, tk.END)
+    entry.delete(entry.index(tk.INSERT)-1, tk.INSERT)
 
 del_btn = tk.Button(text = 'Del', command = Del, font = btn_font, height = btn_h, width = btn_w)
 cvs.create_window(col[3], row[1], window = del_btn)
@@ -159,11 +158,56 @@ def equal():
     equation = equation.replace('ln', 'log')
     if equation.count('(') != equation.count(')'):
         c = equation.count('(') - equation.count(')')
-        for i in range(c):
+        while  c > 0:
             equation = equation + ')'
+            c -= 1
+    n = '1234567890()'
+    if equation.find('sin') > -1:
+        c = equation.count('sin')
+        position = 0
+        while c > 0:
+            position = equation.find('sin', position + 1) 
+            if n.find(equation[position-1]) > -1 and position > -1:
+                equation = equation[0:position] + '*' + equation[position:]
+            c -= 1
+    if equation.find('cos') > -1:
+        c = equation.count('cos')
+        position = 0
+        while c > 0:
+            position = equation.find('cos', position + 1) 
+            if n.find(equation[position-1]) > -1 and position > -1:
+                equation = equation[0:position] + '*' + equation[position:]
+            c -= 1
+    if equation.find('tan') > -1:
+        c = equation.count('tan')
+        position = 0
+        while c > 0:
+            position = equation.find('tan', position + 1) 
+            if n.find(equation[position-1]) > -1 and position > -1:
+                equation = equation[0:position] + '*' + equation[position:]
+            c -= 1
+    if equation.find('log') > -1:
+        c = equation.count('log')
+        position = 0
+        while c > 0:
+            position = equation.find('log', position + 1) 
+            if n.find(equation[position-1]) > -1 and position > -1:
+                equation = equation[0:position] + '*' + equation[position:]
+            c -= 1
+    if equation.find('(') > -1:
+        c = equation.count('(')
+        position = 0
+        while c > 0:
+            position = equation.find('(', position + 1) 
+            if n.find(equation[position-1]) > -1 and equation[position-1] != '(':
+                equation = equation[0:position] + '*' + equation[position:]
+            c -= 1
+        
     result = str(eval(equation))
+    result = result if float(result) > 1.0e-15 else 0
+    result = result if float(result) < 1.0e16 else '\u221E'
     entry.delete(0, tk.END)
-    entry.insert(tk.END, result)
+    entry.insert(tk.INSERT, result)
 
 equal_btn = tk.Button(text = '=', command = equal, font = btn_font, height = btn_h, width = btn_w)
 cvs.create_window(col[2], row[4], window = equal_btn)
