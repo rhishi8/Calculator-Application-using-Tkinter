@@ -13,10 +13,10 @@ cvs.pack()
 entry = tk.Entry(win, bd = 4, font = entry_font, width = 22)
 cvs.create_window(170, 40, window = entry)
 
-row = [95, 140, 185, 230, 275, 320]
-col = [50,  110, 170, 230, 290]
-btn_h = 1
-btn_w = 4
+row = [95, 140, 185, 230, 275, 320] # To Arrange the Buttons in rows specified
+col = [50,  110, 170, 230, 290] # To arrange buttons in Column Specified
+btn_h = 1 # Button Height
+btn_w = 4# Button Width
 
 def f_pow():
     entry.insert(tk.INSERT, '^')
@@ -188,80 +188,118 @@ cvs.create_window(col[1], row[5], window = decimal_btn)
 
 def equal():
     expression = entry.get()
-    equation = expression.replace('\u03c0', 'pi')
-    equation = equation.replace('\u00d7', '*')
-    equation = equation.replace('\u00f7', '/')
-    equation = equation.replace('ln', 'log')
-    equation = equation.replace('^', '**')
-    if Deg:
+    equation = expression.replace('\u03c0', 'pi') # Convert Pi symbol
+    equation = equation.replace('\u00d7', '*')    # Convert multiplication symbol
+    equation = equation.replace('\u00f7', '/')    # Convert division symbol
+    equation = equation.replace('ln', 'log')      # Convert log symbol
+    equation = equation.replace('^', '**')        # Convert raised to symbol
+    if Deg: # Check whether angle unit is Degree
         equation = equation.replace('sin(', 'sin(pi/180 * ')
         equation = equation.replace('cos(', 'cos(pi/180 * ')
         equation = equation.replace('tan(', 'tan(pi/180 * ')
-        equation = equation.replace('sin\u207b\u00b9(', '180/pi*asin(')
-        equation = equation.replace('cos\u207b\u00b9(', '180/pi*acos(')
-        equation = equation.replace('tan\u207b\u00b9(', '180/pi*atan(')
+        equation = equation.replace('sin\u207b\u00b9(', '(180/pi*asin(')
+        equation = equation.replace('cos\u207b\u00b9(', '(180/pi*acos(')
+        equation = equation.replace('tan\u207b\u00b9(', '(180/pi*atan(')
     else:
         equation = equation.replace('sin\u207b\u00b9(', 'asin(')
         equation = equation.replace('cos\u207b\u00b9(', 'acos(')
         equation = equation.replace('tan\u207b\u00b9(', 'atan(')
+
+    # To Close all the open brackets
     if equation.count('(') != equation.count(')'):
-        c = equation.count('(') - equation.count(')')
-        while  c > 0:
+        count = equation.count('(') - equation.count(')')
+        while  count > 0:
             equation = equation + ')'
-            c -= 1
-    n = '1234567890()'
-    if equation.find('sin') > -1:
-        c = equation.count('sin')
-        position = 0
-        while c > 0:
-            position = equation.find('sin', position + 1) 
-            if n.find(equation[position-1]) > -1 and position > -1:
-                equation = equation[0:position] + '*' + equation[position:]
-            c -= 1
-    if equation.find('cos') > -1:
-        c = equation.count('cos')
-        position = 0
-        while c > 0:
-            position = equation.find('cos', position + 1) 
-            if n.find(equation[position-1]) > -1 and position > -1:
-                equation = equation[0:position] + '*' + equation[position:]
-            c -= 1
-    if equation.find('tan') > -1:
-        c = equation.count('tan')
-        position = 0
-        while c > 0:
-            position = equation.find('tan', position + 1) 
-            if n.find(equation[position-1]) > -1 and position > -1:
-                equation = equation[0:position] + '*' + equation[position:]
-            c -= 1
+            count -= 1
+    n = '1234567890()' # For identifying numbers & brackets
+
+    # To add multiplication before logarithmic operator
     if equation.find('log') > -1:
-        c = equation.count('log')
+        count = equation.count('log')
         position = 0
-        while c > 0:
+        while count > 0:
             position = equation.find('log', position + 1) 
             if n.find(equation[position-1]) > -1 and position > -1:
                 equation = equation[0:position] + '*' + equation[position:]
-            c -= 1
-    if equation.find('(') > -1:
-        c = equation.count('(')
+            count -= 1
+
+    # To add multiplication before inverse sine or sine operator
+    if equation.find('asin') > -1:
+        count = equation.count('asin')
         position = 0
-        while c > 0:
+        while count > 0:
+            position = equation.find('asin', position + 1) 
+            if n.find(equation[position-1]) > -1 and position > -1:
+                equation = equation[0:position] + '*' + equation[position:]
+            count -= 1
+    elif equation.find('sin') > -1:
+        count = equation.count('sin')
+        position = 0
+        while count > 0:
+            position = equation.find('sin', position + 1) 
+            if n.find(equation[position-1]) > -1 and position > -1:
+                equation = equation[0:position] + '*' + equation[position:]
+            count -= 1
+
+    # To add multiplication before inverse cosine or cosine operator
+    if equation.find('acos') > -1:
+        count = equation.count('acos')
+        position = 0
+        while count > 0:
+            position = equation.find('acos', position + 1) 
+            if n.find(equation[position-1]) > -1 and position > -1:
+                equation = equation[0:position] + '*' + equation[position:]
+            count -= 1
+    elif equation.find('cos') > -1:
+        count = equation.count('cos')
+        position = 0
+        while count > 0:
+            position = equation.find('cos', position + 1) 
+            if n.find(equation[position-1]) > -1 and position > -1:
+                equation = equation[0:position] + '*' + equation[position:]
+            count -= 1
+
+    # To add multiplication before inverse tangent or tangent operator
+    if equation.find('atan') > -1:
+        count = equation.count('atan')
+        position = 0
+        while count > 0:
+            position = equation.find('atan', position + 1) 
+            if n.find(equation[position-1]) > -1 and position > -1:
+                equation = equation[0:position] + '*' + equation[position:]
+            count -= 1
+    elif equation.find('tan') > -1:
+        count = equation.count('tan')
+        position = 0
+        while count > 0:
+            position = equation.find('tan', position + 1) 
+            if n.find(equation[position-1]) > -1 and position > -1:
+                equation = equation[0:position] + '*' + equation[position:]
+            count -= 1
+
+    # To add multiplication before left bracket
+    if equation.find('(') > -1:
+        count = equation.count('(')
+        position = 0
+        while count > 0:
             position = equation.find('(', position + 1) 
             if n.find(equation[position-1]) > -1 and equation[position-1] != '(':
                 equation = equation[0:position] + '*' + equation[position:]
-            c -= 1
+            count -= 1
+
+    # To add multiplication before pi operator
     if equation.find('pi') > -1:
-        c = equation.count('pi')
+        count = equation.count('pi')
         position = 0
-        while c > 0:
+        while count > 0:
             position = equation.find('pi', position + 1) 
             if n.find(equation[position-1]) > -1 and equation[position-1] != '(':
                 equation = equation[0:position] + '*' + equation[position:]
-            c -= 1
+            count -= 1
     
     result = str(eval(equation))
     result = result if abs(float(result)) > 1.0e-15 else 0
-    result = result if abs(float(result)) < 1.0e16 else '\u221E'
+    result = result if abs(float(result)) < 1.0e16 else '\u221E' 
     entry.delete(0, tk.END)
     entry.insert(tk.INSERT, result)
 
