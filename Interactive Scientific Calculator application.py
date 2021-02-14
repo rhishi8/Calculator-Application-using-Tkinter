@@ -211,7 +211,8 @@ def equal():
         while  count > 0:
             equation = equation + ')'
             count -= 1
-    n = '1234567890()' # For identifying numbers & brackets
+    
+    n = '1234567890)' # For identifying numbers & brackets
 
     # To add multiplication before logarithmic operator
     if equation.find('log') > -1:
@@ -283,25 +284,32 @@ def equal():
         position = 0
         while count > 0:
             position = equation.find('(', position + 1) 
-            if n.find(equation[position-1]) > -1 and equation[position-1] != '(':
+            if n.find(equation[position-1]) > -1 and position > -1:
                 equation = equation[0:position] + '*' + equation[position:]
             count -= 1
 
-    # To add multiplication before pi operator
+    # To add multiplication before pi
     if equation.find('pi') > -1:
         count = equation.count('pi')
         position = 0
         while count > 0:
             position = equation.find('pi', position + 1) 
-            if n.find(equation[position-1]) > -1 and equation[position-1] != '(':
+            if n.find(equation[position-1]) > -1 and position > -1:
                 equation = equation[0:position] + '*' + equation[position:]
             count -= 1
     
-    result = str(eval(equation))
-    result = result if abs(float(result)) > 1.0e-15 else 0
-    result = result if abs(float(result)) < 1.0e16 else '\u221E' 
-    entry.delete(0, tk.END)
-    entry.insert(tk.INSERT, result)
+    try:
+        result = str(eval(equation))
+        result = result if abs(float(result)) > 1.0e-15 else 0
+        result = result if abs(float(result)) < 1.0e16 else '\u221E' 
+        entry.delete(0, tk.END)
+        entry.insert(tk.INSERT, result)
+    except ValueError:
+        entry.delete(0, tk.END)
+        entry.insert(tk.INSERT, 'Invalid Input!!!')
+        entry.after(2000, lambda: entry.delete(0, tk.END))
+        entry.after(2000, lambda: entry.insert(tk.INSERT, expression))
+
 
 equal_btn = tk.Button(text = '=', command = equal, font = btn_font, height = btn_h, width = btn_w)
 cvs.create_window(col[2], row[5], window = equal_btn)
